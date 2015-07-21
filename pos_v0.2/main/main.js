@@ -5,11 +5,13 @@ function printReceipt(barcodes) {
   var cartItems = getCartItems(items);
 
   var receipt =
+
     '***<没钱赚商店>收据***\n' +
     getItemString(cartItems) +
     '----------------------\n' +
     '总计：' + formatPrice(getAmount(cartItems)) + '(元)\n' +
     '**********************';
+
   console.log(receipt);
 }
 
