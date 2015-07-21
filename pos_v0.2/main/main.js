@@ -1,106 +1,100 @@
-function countSame(inputs,object){
-  var count = 0;
-  for(var i = 0; i < inputs.length; i++){
-    if(object === inputs[i]){
-      count ++;
-    }
-  }
-  return count ;
-}
-function findSame(inputs,object){
-  for(var i = 0; i < inputs.length; i++){
-    if(object === inputs[i]){
-      return inputs[i];
-    }
-  }
-}
+function printReceipt(barcodes) {
 
-function delRepeater(inputs){
-  var temp = [inputs[0]];
-  for(var i = 1; i < inputs.length; i++){
-    if(findSame(temp,inputs[i])){
-      continue;
-    }else{
-      temp.push(inputs[i]);
-    }
-  }
-  return temp;
-}
+  var items = getItems(barcodes);
 
-function transform(inputs){
-  var newInputs = [];
-  for(var i = 0; i < inputs.length; i++){
-    switch (inputs[i]){
-      case 'ITEM000000':
-            newInputs.push({
-              barcode: 'ITEM000000',
-              name: '可口可乐',
-              unit: '瓶',
-              price: 3.00
-            });
-            break;
-      case 'ITEM000001':
-            newInputs.push({
-              barcode: 'ITEM000001',
-              name: '雪碧',
-              unit: '瓶',
-              price: 3.00
-            });
-            break;
-      case 'ITEM000002':
-            newInputs.push({
-                barcode: 'ITEM000002',
-                name: '苹果',
-                unit: '斤',
-                price: 5.50
-              });
-            break;
-      case 'ITEM000003':
-            newInputs.push(
-              {
-                barcode: 'ITEM000003',
-                name: '荔枝',
-                unit: '斤',
-                price: 15.00
-              });
-            break;
-      case 'ITEM000004':
-            newInputs.push(
-              {
-                barcode: 'ITEM000004',
-                name: '电池',
-                unit: '个',
-                price: 2.00
-              });
-            break;
-      case 'ITEM000005':
-            newInputs.push(
-              {
-                barcode: 'ITEM000005',
-                name: '方便面',
-                unit: '袋',
-                price: 4.50
-              })
+  var cartItems = getCartItems(items);
 
-    }
-  }
-  return newInputs;
-}
-
-function printReceipt(inputs) {
-  var newInputs = transform(delRepeater(inputs));
-  var list = '***<没钱赚商店>收据***\n';
-  var total = 0;
-  for(var i = 0; i < newInputs.length; i++){
-    list = list + '名称：'+ newInputs[i].name
-      +'，数量：'+ countSame(inputs,newInputs[i].barcode) + newInputs[i].unit
-      +'，单价：'+ newInputs[i].price.toFixed(2)
-      +'(元)，小计：'+ (countSame(inputs,newInputs[i].barcode) * newInputs[i].price).toFixed(2)
-      +'(元)\n';
-    total = total + countSame(inputs,newInputs[i].barcode) * newInputs[i].price;
-  }
-  list = list + '----------------------\n' +
-    '总计：'+ total.toFixed(2) +'(元)\n' +
+  var receipt =
+    '***<没钱赚商店>收据***\n' +
+    getItemString(cartItems) +
+    '----------------------\n' +
+    '总计：' + formatPrice(getAmount(cartItems)) + '(元)\n' +
     '**********************';
-  console.log(list);
+  console.log(receipt);
+}
+
+
+function formatPrice(price) {
+  return price.toFixed(2);
+}
+
+function getItemString(cartItems) {
+  var itemString = '';
+  cartItems.forEach(function (cartItem) {
+    var item = cartItem.item;
+    itemString += '名称：' + item.name
+      + '，数量：' + cartItem.count + item.unit
+      + '，单价：' + formatPrice(item.price)
+      + '(元)，小计：' + formatPrice(cartItem.count * item.price)
+      + '(元)\n';
+
+  });
+
+  return itemString;
+}
+
+
+function getAmount(cartItems) {
+  var amount = 0;
+
+  cartItems.forEach(function (cartItem) {
+    amount += getSubTotal(cartItem.count, cartItem.item.price);
+  });
+
+  return amount;
+}
+
+
+function getSubTotal(count, price) {
+  return count * price;
+}
+
+function getCartItems(items) {
+  var cartItems = [];
+  items.forEach(function (item) {
+    var cartItem = findItem(cartItems, item.barcode);
+    if (cartItem) {
+      cartItem.count++;
+    } else {
+      cartItems.push({item: item, count: 1});
+    }
+  });
+  return cartItems;
+}
+
+
+function findItem(cartItems, barcode) {
+  var foundCartItem;
+  for (var i = 0; i < cartItems.length; i++) {
+    var cartItem = cartItems[i];
+    if (cartItem.item.barcode === barcode) {
+      foundCartItem = cartItem;
+      break;
+    }
+  }
+
+  return foundCartItem;
+}
+
+
+function transformItem(barcode) {
+  var allItems = loadAllItems();
+  var foundItem;
+  for (var i = 0; i < allItems.length; i++) {
+    var item = allItems[i];
+    if (item.barcode === barcode) {
+      foundItem = item;
+      break;
+    }
+  }
+  return foundItem;
+}
+
+function getItems(barcodes){
+  var items = [];
+  barcodes.forEach(function(barcode){
+    var item = transformItem(barcode);
+    items.push(item);
+  })
+  return items;
 }
