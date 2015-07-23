@@ -1,29 +1,30 @@
 function printReceipt(tags) {
-  var pos = new Pos();
-
   var cart = new Cart();
+  var scanner = new Scanner();
+  var pos = new Pos(cart, scanner);
 
-  var cartItems = cart.getCartItems(tags);
+  pos.setCartItems(tags);
 
-  var promotion = pos.handlePormotion(cartItems);
+  var cartItems = pos.cart.cartItems;
 
-  var output = pos.handleOutput(cartItems);
+  pos.receipt.setItemString(cartItems);
 
-  var date = pos.date();
+  pos.receipt.setPormotionString(cartItems);
 
-  var receipt =
+
+  var list =
 
     '***<没钱赚商店>收据***\n' +
-    '打印时间：' + date + '\n' +
+    '打印时间：' + Utils.date() + '\n' +
     '----------------------\n' +
-     output+
+     pos.receipt.itemString+
     '----------------------\n' +
     '挥泪赠送商品：\n' +
-    promotion.string +
+    pos.receipt.promotionString +
     '----------------------\n' +
-    '总计：' + pos.formatPrice(pos.getAmount(cartItems) - promotion.reduce) + '(元)\n' +
-    '节省：' + pos.formatPrice(promotion.reduce) + '(元)\n' +
+    '总计：' + Utils.formatPrice(Cart.getAmount(cartItems) - pos.receipt.reduce) + '(元)\n' +
+    '节省：' + Utils.formatPrice(pos.receipt.reduce) + '(元)\n' +
     '**********************';
 
-  console.log(receipt);
+  console.log(list);
 }

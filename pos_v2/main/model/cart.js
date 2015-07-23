@@ -2,68 +2,46 @@
  * Created by evan on 15-7-23.
  */
 function Cart() {
-
+  this.cartItems = [];
 }
 
-Cart.prototype.getCartItems = function (tags) {
+Cart.prototype.addCartItem = function (cartItem) {
 
-  var cartItems = [];
-  var realThis = this;
+  var cartItems = this.cartItems;
 
-  tags.forEach(function (tag) {
+  var isExist = this.findCartItem(cartItems, cartItem);
 
-    var barcode = tag.split('-')[0];
-
-    var item = realThis.transformItem(barcode);
-
-    var count = tag.split('-')[1] ? tag.split('-')[1] : 1;
-
-    var cartItem = realThis.findCartItem(cartItems, item.barcode);
-
-    if (cartItem) {
-      cartItem.count++;
+    if (isExist) {
+      isExist.count++;
     } else {
-      cartItems.push({item: item, count: count});
+      cartItems.push(cartItem);
     }
-  });
-
-  return cartItems;
 
 };
 
-Cart.prototype.transformItem = function (barcode) {
-  var allItems = loadAllItems();
 
-  var foundItem;
-
-  for (var i = 0; i < allItems.length; i++) {
-
-    var item = allItems[i];
-
-    if (item.barcode === barcode) {
-      foundItem = item;
-      break;
-    }
-
-  }
-  return foundItem;
-};
-
-Cart.prototype.findCartItem = function (cartItems, barcode){
+Cart.prototype.findCartItem = function (cartItems, cartItem){
 
   var foundCartItem;
 
   for (var i = 0; i < cartItems.length; i++) {
 
-    var cartItem = cartItems[i];
-
-    var isExist = cartItem.item.barcode === barcode;
+    var isExist = cartItems[i].item.barcode === cartItem.item.barcode;
 
     if (isExist) {
-      foundCartItem = cartItem;
+      foundCartItem = cartItems[i];
       break;
     }
 
   }
   return foundCartItem;
+};
+
+Cart.getAmount = function (cartItems) {
+  var amount = 0;
+
+  cartItems.forEach(function (cartItem) {
+    amount += Utils.getSubTotal(cartItem.count, cartItem.item.price);
+  });
+  return amount;
 };
