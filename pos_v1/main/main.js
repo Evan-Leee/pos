@@ -81,7 +81,9 @@ function findCartItem(cartItems, barcode) {
   var foundCartItem;
   for (var i = 0; i < cartItems.length; i++) {
     var cartItem = cartItems[i];
+
     var isExist = cartItem.item.barcode === barcode;
+
     if (isExist) {
       foundCartItem = cartItem;
       break;
