@@ -1,7 +1,9 @@
 function printReceipt(tags) {
   var pos = new Pos();
 
-  var cartItems = pos.handleInput(tags);
+  var cart = new Cart();
+
+  var cartItems = cart.getCartItems(tags);
 
   var promotion = pos.handlePormotion(cartItems);
 

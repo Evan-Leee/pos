@@ -20,8 +20,7 @@ Promotion.prototype.promotionItem = function (cartItem) {
       return this.promotionOne(barcodes, cartItem) ;
   }
 
-}
-;
+};
 
 Promotion.prototype.promotionOne = function (barcodes, cartItem) {
 
