@@ -6,22 +6,32 @@ function Pos(){
 }
 
 Pos.prototype.transformItem = function (barcode){
+
   var allItems = loadAllItems();
+
   var foundItem;
+
   for (var i = 0; i < allItems.length; i++) {
+
     var item = allItems[i];
+
     if (item.barcode === barcode) {
       foundItem = item;
       break;
     }
+
   }
+
   return foundItem;
 };
 
 Pos.prototype.handleInput = function (tags){
+
   var cartItems = [];
   var realThis = this;
+
   tags.forEach(function (tag) {
+
     var barcode = tag.split('-')[0];
 
     var item = realThis.transformItem(barcode);
@@ -29,12 +39,14 @@ Pos.prototype.handleInput = function (tags){
     var count = tag.split('-')[1] ? tag.split('-')[1] : 1;
 
     var cartItem = realThis.findCartItem(cartItems, item.barcode);
+
     if (cartItem) {
       cartItem.count++;
     } else {
       cartItems.push({item: item, count: count});
     }
   });
+
   return cartItems;
 
 };
@@ -42,8 +54,11 @@ Pos.prototype.handleInput = function (tags){
 
 
 Pos.prototype.findCartItem = function (cartItems, barcode){
+
   var foundCartItem;
+
   for (var i = 0; i < cartItems.length; i++) {
+
     var cartItem = cartItems[i];
 
     var isExist = cartItem.item.barcode === barcode;
@@ -52,15 +67,20 @@ Pos.prototype.findCartItem = function (cartItems, barcode){
       foundCartItem = cartItem;
       break;
     }
+
   }
   return foundCartItem;
 };
 
 Pos.prototype.handlePormotion = function (cartItems){
+
   var promotionString = '';
   var reduce = 0;
+
   cartItems.forEach(function (cartItem) {
-    var promotion = loadPromotions()[0];
+
+    var promotion = loadPromotions()[0];//后期改进,需根据inputs判断优惠类型,给promotion赋值
+
     var isPromotion = promotion.promotionItem(cartItem);
 
     if (isPromotion.item) {
@@ -70,6 +90,7 @@ Pos.prototype.handlePormotion = function (cartItems){
       reduce += cartItem.item.price;
     }
   });
+
   return {string: promotionString, reduce: reduce};
 };
 
@@ -78,6 +99,7 @@ Pos.prototype.handleOutput = function (cartItems){
     var itemString = '';
     var promote = loadPromotions()[0];
     var realThis = this;
+
     cartItems.forEach(function (cartItem) {
       var item = cartItem.item;
       var promotedItem = promote.promotionItem(cartItem);
@@ -100,6 +122,7 @@ Pos.prototype.formatPrice = function (price) {
 Pos.prototype.getAmount = function (cartItems) {
   var amount = 0;
   var realThis = this;
+
   cartItems.forEach(function (cartItem) {
     amount += realThis.getSubTotal(cartItem.count, cartItem.item.price);
   });

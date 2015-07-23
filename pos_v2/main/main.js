@@ -3,15 +3,11 @@ function printReceipt(tags) {
 
   var cartItems = pos.handleInput(tags);
 
-
   var promotion = pos.handlePormotion(cartItems);
-
-  var date = pos.date();
-
 
   var output = pos.handleOutput(cartItems);
 
-
+  var date = pos.date();
 
   var receipt =
 
