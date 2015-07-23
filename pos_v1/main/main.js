@@ -124,7 +124,7 @@ function promotionItem(cartItem) {
       break;
     }
   }
-  return {price: promotionPrice, item: item};
+  return {price: promotionPrice, item: item, promotionTime: promotionTimes};
 }
 
 function getPromotion(cartItems) {
@@ -135,7 +135,7 @@ function getPromotion(cartItems) {
     if (promotion.item) {
       promotionString +=
         '名称：' + promotion.item.name +
-        '，数量：1' + promotion.item.unit + '\n';
+        '，数量：' + promotion.promotionTime + promotion.item.unit + '\n';
       reduce += cartItem.item.price;
     }
   });
