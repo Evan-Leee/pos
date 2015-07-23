@@ -60,7 +60,7 @@ Pos.prototype.handlePormotion = function (cartItems){
   var promotionString = '';
   var reduce = 0;
   cartItems.forEach(function (cartItem) {
-    var promotion = new Promotion();
+    var promotion = new Promotion()[0];
     var isPromotion = promotion.promotionItem(cartItem);
 
     if (isPromotion.item) {

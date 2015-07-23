@@ -114,7 +114,7 @@ function promotionItem(cartItem) {
   for (var i = 0; i < barcodes.length; i++) {
     var barcode = barcodes[i];
 
-    var promotionTimes = parseInt(cartItem.count / 3, 10);
+    var promotionTimes = Math.floor(cartItem.count / 3);
 
     var isPromotion = cartItem.item.barcode === barcode;
 
